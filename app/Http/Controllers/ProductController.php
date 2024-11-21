@@ -90,7 +90,7 @@ class ProductController extends BaseController
 
 
         $input = $request->all();
-
+        //ok
         if ($request->file('imgUrl')) {
             $file = $request->file('imgUrl');
 
