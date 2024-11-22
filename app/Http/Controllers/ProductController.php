@@ -23,6 +23,8 @@ class ProductController extends BaseController
 
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            "price" => "required",
+            "categories" => "required",
             'detail' => 'required',
         ]);
         if ($validator->fails()) {
@@ -36,9 +38,9 @@ class ProductController extends BaseController
             if (in_array($extension, ['jpeg', 'png', 'jpg', 'gif', 'svg'])) {
                 if ($file->getSize() <= 2 * 1024 * 1024 && $file->getSize() == true) {
                     $filename = time() . '.' . $extension;
-                    $file->move(public_path('images'), $filename);
+                    $file->move(public_path('images/products'), $filename);
 
-                    $input['imgUrl'] = 'images/' . $filename;
+                    $input['imgUrl'] = url('images/products/' . $filename);
 
                 } else {
                     return $this->sendError("File is too large. Maximum size is 2MB.");
@@ -54,6 +56,8 @@ class ProductController extends BaseController
         $convert = [
             'id' => $product->id,
             'name' => $product->name,
+            "price" => $product->price,
+            "categories" => $product->categories,
             'detail' => $product->detail,
             'imgUrl' => $product->imgUrl,
         ];
@@ -75,6 +79,8 @@ class ProductController extends BaseController
         $product = Products::find($id);
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            "price" => "required",
+            "categories" => "required",
             'detail' => 'required',
         ]);
         if ($validator->fails()) {
@@ -98,9 +104,9 @@ class ProductController extends BaseController
             if (in_array($extension, ['jpeg', 'png', 'jpg', 'gif', 'svg'])) {
                 if ($file->getSize() <= 2 * 1024 * 1024 && $file->getSize() == true) {
                     $filename = time() . '.' . $extension;
-                    $file->move(public_path('images'), $filename);
+                    $file->move(public_path('images/products'), $filename);
 
-                    $input['imgUrl'] = 'images/' . $filename;
+                    $input['imgUrl'] = url('images/products/' . $filename);
 
                 } else {
                     return $this->sendError("File is too large. Maximum size is 2MB.");
@@ -117,6 +123,8 @@ class ProductController extends BaseController
         $convert = [
             'id' => $product->id,
             'name' => $product->name,
+            "price" => $product->price,
+            "categories" => $product->categories,
             'detail' => $product->detail,
             'imgUrl' => $product->imgUrl,
         ];

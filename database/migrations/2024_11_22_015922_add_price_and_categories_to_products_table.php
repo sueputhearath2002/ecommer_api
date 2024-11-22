@@ -12,12 +12,9 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('imgUrl');
-            $table->text('detail');
-            $table->timestamps();
+        Schema::table('products', function (Blueprint $table) {
+            $table->float('price')->after("name");
+            $table->string('categories')->after("price");
         });
     }
 
@@ -28,6 +25,8 @@ return new class extends Migration {
      */
     public function down()
     {
-        //
+        Schema::table('products', function (Blueprint $table) {
+            //
+        });
     }
 };

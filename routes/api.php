@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoriesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -32,6 +33,9 @@ Route::middleware('my_auth')->group(callback: function () {
     Route::post('/update_products/{id}', [ProductController::class, 'updateProduct']);
     Route::post('/get_products/{id}', [ProductController::class, 'getProducts']);
     Route::post('/delete_product/{id}', [ProductController::class, 'deleteProduct']);
+    //Categories
+    Route::get('/categories', [CategoriesController::class, 'index']);
+    Route::post('/store_categories', [CategoriesController::class, 'storeCategories']);
 });
 
 //Route::get('/products', [ProductController::class, 'index']);
