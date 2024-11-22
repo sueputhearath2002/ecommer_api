@@ -2,20 +2,22 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Controllers\API\BaseController;
 use App\Models\TokenApi;
+use App\Models\User;
 use Closure;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
-class EcommerceAuthCustom
+class EcommerceAuthCustom extends BaseController
 {
     public function handle(Request $request, Closure $next, ...$guards)
     {
+
         $myToken = $request->token;
         $token = TokenApi::where("token", $myToken)->first();
-        // dd($token);
-        // Example token (this could be dynamic)
-
-        // dd($token,$myToken);
 
         if (!$token || empty($token->token)) {
             return response()->json([
@@ -24,6 +26,9 @@ class EcommerceAuthCustom
             ], 401); // Return Unauthorized error
         }
 
-        return $next($request);  // Proceed to the next middleware or controller
+        $user = User::where("id", $token->user_id)->first();
+        Auth::login($user);
+        return $next($request);
+
     }
 }

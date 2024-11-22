@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -23,11 +24,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::controller(RegisterController::class)->group(callback: function () {
-    Route::post('register', 'register');
-    Route::post('login', 'login');
+    Route::post('/register', 'register');
+    Route::post('/login', 'login');
+
+
+
 });
 
 Route::middleware('my_auth')->group(callback: function () {
+    Route::get('/getUser', [RegisterController::class, 'getInfoUser']);
     //Products
     Route::get('/products', [ProductController::class, 'index']);
     Route::post('/store_products', [ProductController::class, 'storeProduct']);
@@ -40,6 +45,11 @@ Route::middleware('my_auth')->group(callback: function () {
     Route::post('/get_category/{id}', [CategoriesController::class, 'getCategory']);
     Route::post('/update_categories/{id}', [CategoriesController::class, 'updateCategory']);
     Route::post('/delete_category/{id}', [CategoriesController::class, 'deleteCategory']);
+    //Customer
+    Route::get('/customer', [CustomerController::class, 'index']);
+    Route::post('/store_customer', [CustomerController::class, 'storeCustomer']);
+    Route::post('/update_customer/{id}', [CustomerController::class, 'updateCustomer']);
+    Route::post('/delete_customer/{id}', [CustomerController::class, 'deleteCustomer']);
 });
 
 //Route::get('/products', [ProductController::class, 'index']);

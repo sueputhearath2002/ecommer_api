@@ -58,7 +58,7 @@ class RegisterController extends BaseController
 
             $user = Auth::user();
             $token = $user->createToken('MyApp')->plainTextToken;
-            TokenApi::where("user_id", $user->id)->delete();
+            TokenApi::where("user_id", operator: $user->id)->delete();
             $tokenApi = new TokenApi();
             $tokenApi->token = $token;
             $tokenApi->user_id = $user->id;
@@ -73,5 +73,14 @@ class RegisterController extends BaseController
         }
 
         return response()->json(['error' => 'Unauthorized', 'message' => 'Invalid credentials'], 401);
+    }
+
+    public function getInfoUser()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return $this->sendError("Unauthorized", "", 401);
+        }
+        return $this->sendResponse($user, "success");
     }
 }
