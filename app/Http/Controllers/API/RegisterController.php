@@ -83,4 +83,11 @@ class RegisterController extends BaseController
         }
         return $this->sendResponse($user, "success");
     }
+
+    public function logout(Request $request)
+    {
+        $userToken = TokenApi::where("token", $request->token);
+        $userToken->delete();
+        return $this->sendResponse($userToken, "Logout successfully");
+    }
 }

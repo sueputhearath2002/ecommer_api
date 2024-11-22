@@ -26,13 +26,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(RegisterController::class)->group(callback: function () {
     Route::post('/register', 'register');
     Route::post('/login', 'login');
-
-
-
 });
 
 Route::middleware('my_auth')->group(callback: function () {
     Route::get('/getUser', [RegisterController::class, 'getInfoUser']);
+    Route::get('/logout', [RegisterController::class, 'logout']);
     //Products
     Route::get('/products', [ProductController::class, 'index']);
     Route::post('/store_products', [ProductController::class, 'storeProduct']);
