@@ -12,5 +12,6 @@ class Categories extends Model
         'name',
         "imgUrl",
         'detail',
+        'code',
     ];
 }

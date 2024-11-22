@@ -28,6 +28,7 @@ Route::controller(RegisterController::class)->group(callback: function () {
 });
 
 Route::middleware('my_auth')->group(callback: function () {
+    //Products
     Route::get('/products', [ProductController::class, 'index']);
     Route::post('/store_products', [ProductController::class, 'storeProduct']);
     Route::post('/update_products/{id}', [ProductController::class, 'updateProduct']);
@@ -36,6 +37,9 @@ Route::middleware('my_auth')->group(callback: function () {
     //Categories
     Route::get('/categories', [CategoriesController::class, 'index']);
     Route::post('/store_categories', [CategoriesController::class, 'storeCategories']);
+    Route::post('/get_category/{id}', [CategoriesController::class, 'getCategory']);
+    Route::post('/update_categories/{id}', [CategoriesController::class, 'updateCategory']);
+    Route::post('/delete_category/{id}', [CategoriesController::class, 'deleteCategory']);
 });
 
 //Route::get('/products', [ProductController::class, 'index']);
