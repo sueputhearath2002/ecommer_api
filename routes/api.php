@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\outgoingController;
 use App\Http\Controllers\suppliersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -54,6 +55,15 @@ Route::middleware('my_auth')->group(callback: function () {
     Route::post('/store_suppliers', [SuppliersController::class, 'storeSuppliers']);
     Route::post('/update_suppliers/{id}', [SuppliersController::class, 'updateSuppliers']);
     Route::post('/delete_supplier/{id}', [SuppliersController::class, 'deleteSupplier']);
+    Route::get('/search_supplier', [suppliersController::class, 'searchSupplier']);
+    //Outgoing
+    Route::get('/outgoing', [outgoingController::class, 'index']);
+    Route::post('/store_outgoing', [outgoingController::class, 'storeOutgoing']);
+    Route::post('/update_outgoing/{id}', [outgoingController::class, 'updateOutgoing']);
+    Route::post('/delete_supplier/{id}', [outgoingController::class, 'deleteSupplier']);
+    Route::get('/filter_outgoing_by_date', [outgoingController::class, 'filterByDateOutgoing']);
+    Route::get('/search_customer', [outgoingController::class, 'searchByCustomerOutgoing']);
+
 });
 
 //Route::get('/products', [ProductController::class, 'index']);

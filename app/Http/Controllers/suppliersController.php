@@ -139,4 +139,16 @@ class suppliersController extends BaseController
 
     }
 
+    public function searchSupplier(Request $request)
+    {
+        $search = $request->search;
+        $suppliers = Suppliers::where('name', 'like', value: '%' . $search . '%')->get();
+        if ($suppliers->isEmpty()) {
+            return $this->sendError("No supplier found");
+        }
+
+        return $this->sendResponse($suppliers, "Search result");
+    }
+
+
 }
