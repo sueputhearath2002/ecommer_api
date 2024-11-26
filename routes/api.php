@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\suppliersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -48,6 +49,11 @@ Route::middleware('my_auth')->group(callback: function () {
     Route::post('/store_customer', [CustomerController::class, 'storeCustomer']);
     Route::post('/update_customer/{id}', [CustomerController::class, 'updateCustomer']);
     Route::post('/delete_customer/{id}', [CustomerController::class, 'deleteCustomer']);
+    //Suppliers
+    Route::get('/suppliers', [suppliersController::class, 'index']);
+    Route::post('/store_suppliers', [SuppliersController::class, 'storeSuppliers']);
+    Route::post('/update_suppliers/{id}', [SuppliersController::class, 'updateSuppliers']);
+    Route::post('/delete_supplier/{id}', [SuppliersController::class, 'deleteSupplier']);
 });
 
 //Route::get('/products', [ProductController::class, 'index']);

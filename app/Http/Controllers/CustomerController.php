@@ -6,6 +6,7 @@ use App\Http\Controllers\API\BaseController;
 use App\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends BaseController
@@ -24,52 +25,100 @@ class CustomerController extends BaseController
 
     public function storeCustomer(Request $request)
     {
-
+        // Validate input fields
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            "gender" => "required",
-            "address" => "required",
+            'gender' => 'required',
+            'address' => 'required',
             'phone_number' => 'required',
             'date_of_birth' => 'required',
-
         ]);
+
+        // If validation fails, return error response
         if ($validator->fails()) {
             return response()->json(['error' => 'Validation error', 'messages' => $validator->errors()], 400);
         }
-        $input = $request->all();
-        if ($request->file('imgUrl')) {
-            $file = $request->file('imgUrl');
 
+        // Prepare input data
+        $input = $request->all();
+
+        // Handle image upload if file is present
+        if ($request->hasFile('imgUrl')) {
+            $file = $request->file('imgUrl');
             $extension = $file->getClientOriginalExtension();
+
+            // Validate file type and size
             if (in_array($extension, ['jpeg', 'png', 'jpg', 'gif', 'svg'])) {
-                if ($file->getSize() <= 2 * 1024 * 1024 && $file->getSize() == true) {
+                if ($file->getSize() <= 2 * 1024 * 1024) { // Max size 2MB
                     $filename = time() . '.' . $extension;
                     $file->move(public_path('images/products'), $filename);
 
+                    // Store the uploaded image URL
                     $input['imgUrl'] = url('images/products/' . $filename);
 
+                    // Prepare the image file for the API request
+                    $filePath = public_path('images/products/' . $filename);
+                    // Send the image to the PhotoRoom API
+                    $response = Http::withHeaders([
+                        'X-Api-Key' => config('app.remove_bg.api_key'), // Example API key for remove.bg
+                    ])
+                        ->timeout(60)
+                        ->attach(
+                            'image_file',
+                            file_get_contents($filePath),
+                            $filename
+                        )
+                        ->post('https://api.remove.bg/v1.0/removebg');
+
+                    // Check if the response status code is 200 (successful)
+                    if ($response->getStatusCode() != 200) {
+                        return response()->json(['error' => 'Error from PhotoRoom API', 'message' => $response->body()], 400);
+                    }
+
+                    // Save the processed image (response from PhotoRoom API)
+                    $processedImage = $response->body();
+                    $processedImagePath = public_path('images/products/processed_' . $filename);
+                    file_put_contents($processedImagePath, $processedImage);
+
+                    // Update the image URL for the processed image
+                    $input['imgUrl'] = url('images/products/processed_' . $filename);
                 } else {
-                    return $this->sendError("File is too large. Maximum size is 2MB.");
+                    return response()->json(['error' => 'File is too large. Maximum size is 2MB.'], 400);
                 }
             } else {
-                return $this->sendError("Invalid image type. Allowed types: jpeg, png, jpg, gif, svg.");
+                return response()->json(['error' => 'Invalid image type. Allowed types: jpeg, png, jpg, gif, svg.'], 400);
             }
-
         } else {
-
-            $input['imgUrl'] = "";
+            // No image uploaded, set default image URL as empty
+            $input['imgUrl'] = '';
         }
+
+        // Create the customer
         $customer = Customer::create($input);
-        $convert = [
+
+        // Prepare the response
+        $response = [
             'id' => $customer->id,
             'name' => $customer->name,
-            "phone_number" => $customer->phone_number,
-            "address" => $customer->address,
-            "gender" => $customer->gender,
+            'phone_number' => $customer->phone_number,
+            'address' => $customer->address,
+            'gender' => $customer->gender,
             'date_of_birth' => $customer->date_of_birth,
             'imgUrl' => $customer->imgUrl,
         ];
-        return $this->sendResponse($convert, 'Create Products successfully.');
+
+        // Return success response
+        return response()->json(['data' => $response, 'message' => 'Customer created successfully.'], 200);
+    }
+    public function getCustomer($id)
+    {
+        $customer = Customer::where('id', $id)->first();
+        if (!$customer) {
+            return $this->sendError("Customer not found");
+        }
+
+        // If the product is found, return it
+        return $this->sendResponse($customer, "successfully");
     }
 
     public function updateCustomer(Request $request, $id)
