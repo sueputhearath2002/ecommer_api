@@ -40,6 +40,8 @@ Route::middleware('my_auth')->group(callback: function () {
     Route::post('/update_products/{id}', [ProductController::class, 'updateProduct']);
     Route::post('/get_products/{id}', [ProductController::class, 'getProducts']);
     Route::post('/delete_product/{id}', [ProductController::class, 'deleteProduct']);
+    Route::get('/get_week', [ProductController::class, 'getWeeklySales']);
+
     //Categories
     Route::get('/categories', [CategoriesController::class, 'index']);
     Route::post('/store_categories', [CategoriesController::class, 'storeCategories']);
@@ -68,6 +70,7 @@ Route::middleware('my_auth')->group(callback: function () {
     Route::get('/purchase', [PurchaseController::class, 'index']);
     Route::post('/store_purchase', [PurchaseController::class, 'storeProduct']);
     Route::get('/get_purchase', [PurchaseController::class, 'getDetailPurchase']);
+
 
 
 

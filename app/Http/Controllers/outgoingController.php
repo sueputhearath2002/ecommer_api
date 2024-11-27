@@ -51,7 +51,7 @@ class outgoingController extends BaseController
             return response()->json(['error' => 'Validation error', 'messages' => $validator->errors()], 400);
         }
         $input = $request->all();
-        $input['date'] = date("d-m-Y", strtotime($input['date'] ?? Carbon::now()->toDateString()));
+        $input['date'] = $input['date'] ?? Carbon::now()->toDateString();
         $input["product"] = $checkProduct->id;
         $getQty = 0;
         $getQty = $checkProduct->quantity - $request->quantity;
@@ -104,7 +104,7 @@ class outgoingController extends BaseController
             $out->date = $request->date;
         }
         $input = $request->all();
-        $input['date'] = date("d-m-Y", strtotime($input['date'] ?? Carbon::now()->toDateString()));
+        $input['date'] = $input['date'] ?? Carbon::now()->toDateString();
         $input["product"] = $checkProduct->id;
         $getQty = 0;
         $getQty = $checkProduct->quantity - $request->quantity;

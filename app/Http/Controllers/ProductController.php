@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Controllers\API\BaseController;
+use App\Models\outgoing;
 use App\Models\Products;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends BaseController
 {
@@ -147,5 +149,38 @@ class ProductController extends BaseController
         $product->delete();
         return $this->sendResponse($product, "Record $request->id  has been deleted Successfully");
 
+    }
+
+    public function getWeeklySales()
+    {
+        $startOfWeek = Carbon::now()->startOfWeek()->toDateString();
+        $endOfWeek = Carbon::now()->endOfWeek()->toDateString();
+
+
+        $sales = outgoing::whereRaw('DATE(date) BETWEEN ? AND ?', [$startOfWeek, $endOfWeek])
+            ->whereNotNull('quantity')  // Ensure quantity is not null
+            ->where('quantity', '>', 0) // Optionally filter out 0 quantity records
+            ->selectRaw("DATE_FORMAT(date, '%d-%m-%Y') as date, SUM(quantity) as total_quantity")
+            ->groupBy('date')  // Group by raw date (Y-m-d format)
+            ->orderBy('date')
+            ->get();
+
+        $dateRange = Carbon::parse($startOfWeek)->daysUntil($endOfWeek);
+        $formattedData = collect();
+
+        foreach ($dateRange as $date) {
+            $formattedDate = $date->format('d-m-Y');
+            $saleForDate = $sales->firstWhere('date', $formattedDate);
+
+            $formattedData->push([
+                'date' => $formattedDate,
+                'total_quantity' => $saleForDate ? $saleForDate->total_quantity : 0, // Corrected this line
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $formattedData,
+        ]);
     }
 }
