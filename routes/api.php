@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\outgoingController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\suppliersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -63,6 +64,12 @@ Route::middleware('my_auth')->group(callback: function () {
     Route::post('/delete_supplier/{id}', [outgoingController::class, 'deleteSupplier']);
     Route::get('/filter_outgoing_by_date', [outgoingController::class, 'filterByDateOutgoing']);
     Route::get('/search_customer', [outgoingController::class, 'searchByCustomerOutgoing']);
+    //Purchase
+    Route::get('/purchase', [PurchaseController::class, 'index']);
+    Route::post('/store_purchase', [PurchaseController::class, 'storeProduct']);
+    Route::get('/get_purchase', [PurchaseController::class, 'getDetailPurchase']);
+
+
 
 });
 
