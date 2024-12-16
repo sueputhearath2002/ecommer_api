@@ -5,6 +5,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\outgoingController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\suppliersController;
+use App\Http\Controllers\TrainModelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -75,5 +76,5 @@ Route::middleware('my_auth')->group(callback: function () {
 
 
 });
-
+Route::post('/upload-images', [TrainModelController::class, 'storeTrain']);
 //Route::get('/products', [ProductController::class, 'index']);
